@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const mongoose = require('mongoose');
 
 
 const multer  = require('multer')
@@ -17,9 +18,25 @@ const upload = multer({ storage: storage,limit:{
     fileSize : 200*1024*1024
   }})
 
-//MONGGOSE
+//MONGGOSE News
+mongoose.set('strictQuery', true);
+mongoose.connect('mongodb+srv://admin:lamnhph18826@cluster0.tdhtc06.mongodb.net/news').then(data=>{
+    if (data!=null){
+        console.log("connect news success :'>")
+    }
+});
 
-const news = require('../model/news')
+
+const {Schema} = mongoose;
+const News = new Schema({
+    id : String,
+    title : String,
+    message : String,
+    date:Date,
+    link :Object
+})
+const news = mongoose.model('news',News);
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -96,11 +113,11 @@ router.get('/', function(req, res, next) {
 //   }
 // })
 //
-// router.get('/newsApi',function (req,res) {
-//   news.find({}).then(data=>{
-//     res.send(data)
-//   })
-// })
+router.get('/newsApi',function (req,res) {
+  news.find({}).then(data=>{
+    res.send(data)
+  })
+})
 //
 // router.post('/update',function (req,res){
 //   var _id = req.body._id;
@@ -122,12 +139,18 @@ router.get('/', function(req, res, next) {
 // })
 //
 // //apm
+const Apartment = new Schema({
+    _id : String,
+    area : String,
+    status : String,
+})
+const apartment = mongoose.model('apartment',Apartment);
 // const apartment = require('../model/apartment')
-// router.get('/apartmentApi',function (req, res) {
-//   apartment.find({}).then(data=>{
-//     res.json(data);
-//   });
-// })
+router.get('/apartmentApi',function (req, res) {
+  apartment.find({}).then(data=>{
+    res.json(data);
+  });
+})
 // router.post('/newsApartment',function (req, res) {
 //   var _id = req.body.id;
 //   var _area = req.body.area;
@@ -154,11 +177,24 @@ router.get('/', function(req, res, next) {
 // var jwt = require('jsonwebtoken');
 //
 //
-// router.get('/usersApi', function(req, res, next) {
-//   user.find({}).then(data=>{
-//     res.json(data);
-//   })
-// });
+const Users = new Schema({
+    _id:String,
+    name : String,
+    age : String,
+    address : String,
+    phone : String,
+    sex : String,
+    identifier : String,
+    career : String,
+    gmail : String,
+    passWord : String,
+},{timestamps:true})
+const users = mongoose.model('users',Users);
+router.get('/usersApi', function(req, res, next) {
+  users.find({}).then(data=>{
+    res.json(data);
+  })
+});
 //
 // router.post('/insertUsers',async function (req,res) {
 //   var pass = '123456'
